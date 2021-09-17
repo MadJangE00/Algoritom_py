@@ -3,6 +3,7 @@
 from __future__ import annotations
 from typing import Any, Type
 
+
 class Node:
     """ 원형 이중 연결 리스트용 노드 클래스 """
 
@@ -11,6 +12,7 @@ class Node:
         self.data = data
         self.prev = prev or self
         self.next = next or self
+
 
 class DoubleLinkedList:
     """ 원형 이중 연결 리스트 클래스 """
@@ -64,7 +66,7 @@ class DoubleLinkedList:
         while ptr is not self.head:
             print(ptr.data)
             ptr = ptr.prev
-    
+
     def next(self) -> bool:
         """ 주목 노드를 한 칸 뒤로 이동 """
         if self.is_empty() or self.current.next is self.head:
@@ -76,9 +78,9 @@ class DoubleLinkedList:
         """ 주목 노드를 한 칸 앞으로 이동 """
         if self.is_empty() or self.current.prev is self.head:
             return False
-        self.currens = self.current.prev
+        self.current = self.current.prev
         return True
-    
+
     def add(self, data: Any) -> None:
         """ 주목 노드 바로 뒤에 노드를 삽입 """
         node = Node(data, self.current, self.current.next)
@@ -106,7 +108,7 @@ class DoubleLinkedList:
             self.no -= 1
             if self.current is self.head:
                 self.current = self.head.next
-        
+
     def remove(self, p: Node) -> Node:
         """ 노드 p를 삭제 """
         ptr = self.head.next
@@ -133,3 +135,49 @@ class DoubleLinkedList:
         while not self.is_empty():
             self.remove_first()
         self.no = 0
+
+    def __iter__(self) -> DoubleLinkedListIterator:
+        """ 이터이를 반환 """
+        return DoubleLinkedListIterator(self.head)
+
+    def __reversed__(self) -> DoubleLinkedListReverseIterator:
+        """ 내림차순 이터레이터를 반환 """
+        return DoubleLinkedListReverseIterator(self.head)
+
+
+class DoubleLinkedListIterator:
+    """ DoubleLinkedList의 이터레이터용 클래스 """
+
+    def __init__(self, head: Node):
+        self.head = head
+        self.current = head.next
+
+    def __iter__(self) -> DoubleLinkedListIterator:
+        return self
+
+    def __next__(self) -> Any:
+        if self.current is self.head:
+            raise StopIteration
+        else:
+            data = self.current.data
+            self.current = self.current.next
+            return data
+
+
+class DoubleLinkedListReverseIterator:
+    """ DoubleLinkedList의 내림차순 이터레이터 클래스 """
+
+    def __init__(self, head: Node):
+        self.head = head
+        self.current = head.prev
+
+    def __iter__(self) -> DoubleLinkedListReverseIterator:
+        return self
+
+    def __next__(self) -> Any:
+        if self.current is self.head:
+            raise StopIteration
+        else:
+            data = self.current.data
+            self.current = self.current.prev
+            return data
